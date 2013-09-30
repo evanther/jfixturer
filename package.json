@@ -4,7 +4,8 @@
   "description": "Fixtures magicos",
   "version": "0.1.0",
   "dependencies": {
-    "optimist" : "0.6.0"
+    "optimist" : "0.6.0",
+    "file" : "0.2.1"
   },
   "scripts": {
     "start": "node app"
