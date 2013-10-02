@@ -6,7 +6,7 @@ function capitalize(word) {
 	return word.charAt(0).toUpperCase() + word.slice(1);
 }
 
-var inputFile = file.path.abspath(argv.i);
+var inputFile = file.path.abspath(argv._[0]);
 var suffix = capitalize(argv.s || 'Fixture');
 
 console.log('Input file is: ' + inputFile);
@@ -16,8 +16,20 @@ var fileData = fs.readFileSync(inputFile, {encoding : 'utf8'});
 
 PACKAGE_PATTERN = /^\s*package\s+(.+);$/;
 CLASS_PATTERN = /.*\s+class\s+(\w+).*$/;
-PRIVATE_FIELD_PATTERN = /^\s*private\s*(\w+)\s*(\w+)\s*.*;\s*$/;
+PRIVATE_FIELD_PATTERN = /^\s*private\s*([\w<>]+)\s*(\w+)\s*.*;\s*$/;
 STATIC_FIELD_PATTERN = /.*static.*/;
+
+DEFAULT_VALUES = {
+	'String' : '\"some string\"',
+	'int' : '123',
+	'Integer' : '123',
+	'Option<Integer>' : 'Option.some(123)',
+	'long' : '123l',
+	'Long' : '123l',
+	'Date' : 'new Date(123)',
+	'boolean' : 'true',
+	'Boolean' : 'Boolean.FALSE'
+};
 
 var package;
 var clazz;
@@ -39,14 +51,22 @@ fileData.split('\n').forEach(function(line, index){
 	}
 	var matchesPrivateField = line.match(PRIVATE_FIELD_PATTERN);
 	if (matchesPrivateField && !line.match(STATIC_FIELD_PATTERN)) {
-		fields.push({type : matchesPrivateField[1], name : matchesPrivateField[2]});
+		var name = matchesPrivateField[2];
+		var type = matchesPrivateField[1];
+		var defaultVal = DEFAULT_VALUES[type] || '/*Unhandled type '+type+'. Please, add type mapping in freader.js line 22 and push the code ;) tanks*/';
+		fields.push({type : type, name : name, defaultVal : defaultVal});
 	}
 });
 
 console.log('Package detected: ' + package);
 console.log('Class detected: ' + clazz);
-console.log('Fields detected: ');
-console.log(fields);
+if (fields.length > 0) {
+	console.log('Fields detected: ');
+	console.log(fields);
+} else {
+	console.log('No fields detected? Are you omitting the \'private\' modifier?\nAborted'.error);
+	process.exit(0);
+}
 
 var packageLevels = package.split('.');
 
