@@ -1,6 +1,6 @@
 var fs = require('fs');
 var file = require('file');
-// var Logger = require('./logger.js');
+var Logger = require('./logger.js');
 
 PACKAGE_PATTERN = /^\s*package\s+(.+);$/;
 CLASS_PATTERN = /.*\s+class\s+(\w+).*$/;
@@ -22,42 +22,27 @@ DEFAULT_VALUES = {
 	'Option<Boolean>' : 'Option.some(Boolean.TRUE)'
 };
 
-/**
-*	Class : JParser
-*	Constructor args
-*		parserOpts : {[enableLogs : true]}
-*/
-function JParser(/*parserOpts*/) {
+// Class
+function JParser() {
 
-	// private attributes:
-	// var logger;
+	// private:
+	var logger;
 
 	// constructor:
-	/*(function(){
-		parserOpts = parserOpts || {};
-		parserOpts.enableLogs = parserOpts.enableLogs !== false;
+	(function(){
+		logger = new Logger();
+	})();
 
-		// logger = new Logger();
-		// logger.setEnabled(parserOpts.enableLogs);
-	})();*/
-
-	// private methods:
-	/*function prepareOptions(opts) {
-		opts = opts || {};
-		opts.suffix = opts.suffix || 'Fixture';
-		return opts;
-	}*/
-
+	// private:
 	function readFile(filepath) {
 		return fs.readFileSync(filepath, {encoding : 'utf8'});
 	}
 
-	// public methods:
+	// public:
 	/**
 	*	Method : parseFile
 	*	Args
-	*		filepath : Ruta del archivo .java
-	*		options  : {[suffix : 'Fixture']}
+	*		filepath : Absolute or relative Java filepath
 	*	Returns
 	*		{
 	*			package : string,
@@ -71,12 +56,7 @@ function JParser(/*parserOpts*/) {
 	*			projectFolder : string
 	*		}
 	*/
-	this.parseFile = function(filepath /*, options*/) {
-		// options = prepareOptions(options);
-
-		// logger.info('Parsing input file: ' + filepath);
-		// logger.info('Using suffix: ' + options.suffix);
-
+	this.parseFile = function(filepath) {
 		var filepath = file.path.abspath(filepath);
 		var fileContent = readFile(filepath);
 
@@ -100,7 +80,11 @@ function JParser(/*parserOpts*/) {
 			if (matchesPrivateField && !line.match(STATIC_FIELD_PATTERN)) {
 				var name = matchesPrivateField[2];
 				var type = matchesPrivateField[1];
-				var defaultVal = DEFAULT_VALUES[type] || '/*Unhandled type '+type+'. Please, add type mapping in jparser.js line 10 and push the code ;) tanks*/';
+				var defaultVal = DEFAULT_VALUES[type];
+				if (!defaultVal) {
+					logger.warn('Unknown attribute type ' + type);
+					defaultVal = '/*Unhandled type '+type+'. Please, add type mapping in jparser.js line 10 and push the code ;) thanks*/';
+				}
 				parsed.fields.push({type : type, name : name, defaultVal : defaultVal});
 			}
 		});

@@ -21,7 +21,12 @@ var suffix = argv.s;
 
 // Read bean file
 var inputFilepath = file.path.abspath(argv._[0]);
-logger.info("Input file is: " + inputFilepath);
+if (fs.existsSync(inputFilepath)) {
+	logger.info("Input file is: " + inputFilepath);
+} else {
+	logger.error('Input file not exists! '+inputFilepath+'\nAborted');
+	process.exit(0);
+}
 logger.info("Fixture suffix: " + suffix);
 
 if (paramConstructor) {
