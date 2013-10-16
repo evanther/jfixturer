@@ -9,6 +9,7 @@ STATIC_FIELD_PATTERN = /.*static.*/;
 
 DEFAULT_VALUES = {
 	'String' : '\"some string\"',
+	'Option<String>' : 'Option.some("some string")',
 	'int' : '123',
 	'Integer' : '123',
 	'Option<Integer>' : 'Option.some(123)',

@@ -8,12 +8,15 @@ function isUpper(character) {
 
 function toConstantStyle(camelized) {
 	var constant = '';
+	var lastCharIsUpper = true;
 	for (var i = 0; i < camelized.length ; i++) {
 		var character = camelized.charAt(i);
-		if (isUpper(character)) {
+		var charIsUpper = isUpper(character);
+		if (charIsUpper && !lastCharIsUpper) {
 			constant += '_';
 		}
 		constant += character;
+		lastCharIsUpper = charIsUpper;
 	}
 	return constant.toUpperCase();
 }
