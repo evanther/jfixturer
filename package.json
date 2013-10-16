@@ -1,15 +1,15 @@
 {
-  "author": "evanther",
   "name": "jfixture",
-  "description": "Fixtures magicos",
   "version": "0.1.0",
+  "author": "Evanther <esteban.valery@gmail.com>",
+  "description": "A simple CLI fixture maker",
   "dependencies": {
     "optimist" : "0.6.0",
     "file" : "0.2.1",
     "colors" : "0.6.2"
   },
-  "scripts": {
-    "start": "node app"
-  },
-  "main": "./app"
+  "main": "./app.js",
+  "bin": {
+    "jfixturer": "./app.js"
+  }
 }

@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 var argv = require('optimist')
 	.usage('Creates a fixture at test scope. Usage: $0 path/to/File.java [-s suffix] [--p]')
 	.describe('s', 'The resulting fixture class suffix')
